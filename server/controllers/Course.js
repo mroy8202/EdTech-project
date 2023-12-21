@@ -7,23 +7,37 @@ require("dotenv").config();
 // createCourse -> handler
 exports.createCourse = async (req, res) => {
     try {
-        // fetch data
-        const { courseName, courseDescription, whatYouWillLearn, price, category } = req.body;
+        // Get user ID from request object
+		const userId = req.user.id;
+
+		// Get all required fields from request body
+		let {
+			courseName,
+			courseDescription,
+			whatYouWillLearn,
+			price,
+			tag,
+			category,
+			status,
+			instructions,
+		} = req.body;
 
         // fetch thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         // validation
-        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !category) {
+        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !category || !thumbnail) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
             });
         }
+        if (!status || status === undefined) {
+			status = "Draft";
+		}
 
         // check for instructor
-        const userId = req.user.id;
-        const instructorDetails = await User.findById(userId);
+        const instructorDetails = await User.findById(userId, { accountType: "Instructor" });
         console.log("Instructor Details: ",  instructorDetails);
 
         if(!instructorDetails) {
@@ -34,7 +48,7 @@ exports.createCourse = async (req, res) => {
         }
 
         // check given tag is valid or not
-        const categoryDetails = await Category.findById(tag);
+        const categoryDetails = await Category.findById(category);
         if(!categoryDetails) {
             return res.status(404).json({
                 success: false,
@@ -44,17 +58,21 @@ exports.createCourse = async (req, res) => {
 
         // upload image to cloudinary
         const thumbnailImage = await uploadImageToCloudinary(thumbnail, process.env.FOLDER_NAME);
+        console.log("Thumbnail image: ", thumbnailImage);
 
         // create an entry for new course
         const newCourse = await Course.create({
-            courseName,
-            courseDescription,
-            instructor: instructorDetails._id,
-            whatYouWillLearn,
-            price,
-            category: categoryDetails._id,
-            thumbnail: thumbnailImage.secure_url
-        });
+			courseName,
+			courseDescription,
+			instructor: instructorDetails._id,
+			whatYouWillLearn: whatYouWillLearn,
+			price,
+			tag: tag,
+			category: categoryDetails._id,
+			thumbnail: thumbnailImage.secure_url,
+			status: status,
+			instructions: instructions,
+		});
 
         // add the new course to the user schema of instructor
         await User.findByIdAndUpdate(
@@ -66,13 +84,17 @@ exports.createCourse = async (req, res) => {
         );
 
         // update the tag schema
-        await Course.findByIdAndUpdate(
-            {_id: newCourse._id},
-            {category: category},
+        await Category.findByIdAndUpdate(
+            {_id: category},
+            {
+                $push: {
+					course: newCourse._id,
+				},
+            },
             {new: true}
         );
 
-        // return successfull response
+        // Return the new course and a success message
         res.status(200).json({
             success: true,
             message: "Course created successfully",
@@ -89,11 +111,18 @@ exports.createCourse = async (req, res) => {
     }
 };
 
-// showAllCourses -> handler
-exports.showAllCourses = async (req, res) => {
+// getAllCourses -> handler
+exports.getAllCourses = async (req, res) => {
     try {
         // fetch al courses 
-        const allCourses = await Course.find({});
+        const allCourses = await Course.find({}, {
+            courseName: true,
+            price: true,
+            thumbnail: true,
+            instructor: true,
+            ratingAndReviews: true,
+            studentsEnroled: true,
+        }).populate("instructor").exec();
 
         // return successfull response
         return res.status(200).json({
