@@ -1,87 +1,93 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 // updateProfile -> handler
 exports.updateProfile = async (req, res) => {
-    try {
+	try {
         // fetch data
-        // if data is found, take that data otherwise, take empty data
-        const { dateOfBirth="", about="", contactNumber, gender } = req.body;
+		const { dateOfBirth = "", about = "", contactNumber } = req.body;
+		const id = req.user.id;
 
-        // fetch userId
-        const id = req.user.id;
+		// Find the profile by id
+		const userDetails = await User.findById(id);
+		const profile = await Profile.findById(userDetails.additionalDetails);
 
-        // validation
-        if(!contactNumber || !gender) {
-            return res.status(400).json({
-                success: false,
-                message: "All fields are required",
-            });
-        }
+		// Update the profile fields
+		profile.dateOfBirth = dateOfBirth;
+		profile.about = about;
+		profile.contactNumber = contactNumber;
 
-        // find profile from db
-        const userDetails = await User.findById(id);
-        const profileId = userDetails.additionalDetails;
-        const profileDetails = await Profile.findById(profileId);
+		// Save the updated profile
+		await profile.save();
 
-        // update profile in db
-        // used save method instead of findByIdAndUpdate, so entered the data of profileDetails manually
-        profileDetails.dateOfBirth = dateOfBirth;
-        profileDetails.about = about;
-        profileDetails.gender = gender;
-        profileDetails.contactNumber = contactNumber;
-        await profileDetails.save();
-
-        // return response
-        res.status(200).json({
-            success: true,
-            message: "profile updated successfully",
-            profileDetails,
-        });
-    }
-    catch(error) {
-        return res.status(500).json({
-            success: false,
-            message: "unbale to update profile",
-            error: error.message,
-        });
-    }
-}
+		return res.json({
+			success: true,
+			message: "Profile updated successfully",
+			profile,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			success: false,
+			error: error.message,
+		});
+	}
+};
 
 // deleteAccount -> handler
 exports.deleteAccount = async (req, res) => {
-    try {
-        // get id
-        const id = req.user.id;
+	try {
+        // fetch data
+		const id = req.user.id;
 
-        // validation on id
-        const userDetails = await User.findById(id);
-        if(!userDetails) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
-        }
+		const user = await User.findById({ _id: id });
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found",
+			});
+		}
 
-        // delete profile
-        await Profile.findByIdAndDelete({_id: userDetails.additionalDetails});
-
-        // unenroll user from all enrolled courses
-
-        // delete user
-        await User.findByIdAndDelete({_id: id});
-
-        // return successfull response
+		// Delete Assosiated Profile with the User
+		await Profile.findByIdAndDelete({ _id: user.userDetails });
+		
+        // Now Delete User
+		await user.findByIdAndDelete({ _id: id });
+		
         res.status(200).json({
-            success: true,
-            message: "account deleted successfully"
+			success: true,
+			message: "User deleted successfully",
+		});
+	} 
+    catch (error) {
+		console.log(error);
+		return res.status(500).json({ 
+            success: false, 
+            message: "User Cannot be deleted successfully" 
         });
-    }
-    catch(error) {
-        return res.status(500).json({
-            success: false,
-            message: "unbale to delete account",
-            error: error.message,
-        });
-    }
-}
+	}
+};
+
+// getAllUserDetails -> handler
+exports.getAllUserDetails = async (req, res) => {
+	try {
+		const id = req.user.id;
+
+		const userDetails = await User.findById(id).populate("additionalDetails").exec();
+
+		console.log("userDetails: ", userDetails);
+
+		res.status(200).json({
+			success: true,
+			message: "User Data fetched successfully",
+			data: userDetails,
+		});
+	} 
+    catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
+};
