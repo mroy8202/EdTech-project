@@ -39,13 +39,13 @@ exports.createSubSection = async (req, res) => {
                 }
             },
             {new: true}
-        );
+        ).populate("subSection");
 
         // return response
         res.status(200).json({
             success: true,
             message: "Sub-section created successfully",
-            updatedSection
+            data: updatedSection
         });
 
 
