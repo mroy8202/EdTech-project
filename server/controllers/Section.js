@@ -27,9 +27,9 @@ exports.createSection = async (req, res) => {
                 }
             },
             {new: true}
-        );
+        ).populate({path: "courseContent", populate: {path: "subSection"}}).exec();
 
-        // return successfull response
+        // Return the updated course object in the response
         res.status(200).json({
             success: true,
             message: "Section created successfully",
@@ -66,7 +66,7 @@ exports.updateSection = async (req, res) => {
         // return response
         res.status(200).json({
             success: true,
-            message: "section updated successfully",
+            message: section,
         });
     }
     catch(error) {
