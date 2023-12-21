@@ -58,3 +58,29 @@ exports.createSubSection = async (req, res) => {
         });
     }
 }
+
+// updateSubSection
+exports.updateSubSection = async (req, res) => {
+    try {
+        
+    }
+    catch(error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error in updating sub-section"
+        });
+    }
+}
+
+// deleteSubSection
+exports.deleteSubSection = async (req, res) => {
+    try {
+
+    }
+    catch(error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error in deleting sub-section"
+        });
+    }
+}
