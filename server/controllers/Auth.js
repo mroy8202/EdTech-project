@@ -4,6 +4,9 @@ const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const mailSender = require("../utils/mailSender");
+const Profile = require("../models/Profile");
+const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 
 // send otp
 exports.sendOTP = async (req, res) => {
@@ -11,11 +14,14 @@ exports.sendOTP = async (req, res) => {
         // fetch email from req body
         const { email } = req.body;
 
-        // check if user already exists
+        // Check if user is already present
+		// Find user with provided email
         const checkUserPresent = await User.findOne({email});
+        // to be used in case of signup
 
-        // if user already exists, return a response
+        // If user found with provided email
         if(checkUserPresent) {
+            // Return 401 Unauthorized status code with error message
             return res.status(401).json({
                 success: false,
                 message: "User already registered"
@@ -33,6 +39,7 @@ exports.sendOTP = async (req, res) => {
         // check if otp is unique or not
         // if not unique, regenerate otp
         let result = await OTP.findOne({otp: otp});
+        console.log("Result", result);
         while(result) {
             otp = otpGenerator.generate(6, {
                 upperCaseAlphabets: false,
@@ -46,7 +53,7 @@ exports.sendOTP = async (req, res) => {
 
         // create an entry for OTP in DB
         const otpBody = await OTP.create(otpPayload);
-        console.log(otpBody);
+        console.log("OTP Body", otpBody);
         
         // return a successfull response
         res.status(200).json({
@@ -109,7 +116,7 @@ exports.signup = async (req, res) => {
         console.log("recent OTP: ", recentOTP);
 
         // validate OTP
-        if(recentOTP.length == 0) {
+        if(recentOTP.length === 0) {
             // OTP not found
             return res.status(400).json({
                 success: false,
@@ -126,6 +133,10 @@ exports.signup = async (req, res) => {
         // hash password using bcrypt
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create the user
+		let approved = "";
+		approved === "Instructor" ? (approved = false) : (approved = true);
+
         // create entry in DB
         const profileDetails = await Profile.create({
             gender: null,
@@ -140,7 +151,8 @@ exports.signup = async (req, res) => {
             email,
             contactNumber,
             password: hashedPassword,
-            accountType,
+            accountType: accountType,
+            approved: approved,
             additionalDetails: profileDetails._id,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
         });
@@ -167,17 +179,19 @@ exports.login = async (req, res) => {
         // fetch data from req body
         const { email, password } = req.body;
 
-        // validate data
+        // Check if email or password is missing
         if(!email || !password) {
-            return res.status(403).json({
+            return res.status(400).json({
                 success: false,
                 message: "All fields are required"
             }); 
         };
 
         // check if user exists or not
-        const user = await User.findOne({email});
+        const user = await User.findOne({email}).populate("additionalDetails");
+        // If user not found with provided email
         if(!user) {
+            // Return 401 Unauthorized status code with error message
             return res.status(401).json({
                 success: false,
                 message: "user is not registered, please signup first"
@@ -192,12 +206,13 @@ exports.login = async (req, res) => {
                 accountType: user.accountType
             }
             // create jwt token
-            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
 
+            // Save token to user document in database
             user.token = token;
             user.password = undefined;
 
-            // create cookie and send response
+            // Set cookie for token and return success response
             const options = {
                 expires: new Date(Date.now() + 3 * 24 * 60 * 60 *1000),
                 httpOnly: true
@@ -218,6 +233,7 @@ exports.login = async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        // Return 500 Internal Server Error status code with error message
         return res.status(500).json({
             success: false,
             message: "Login failure, please try again"
