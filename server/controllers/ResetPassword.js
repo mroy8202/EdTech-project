@@ -1,12 +1,13 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 // resetPasswordToken
 exports.resetPasswordToken = async (req, res) => {
     try {
         // fetch email from req body
-        const { email } = req.body.email;
+        const { email } = req.body;
 
         // check user for this email, email validation
         const user = await User.findOne({email: email});
@@ -48,7 +49,8 @@ exports.resetPasswordToken = async (req, res) => {
         console.log(error);
         return res.status(500).json({
             success: false,
-            message: "Something went wrong while reset password"
+            message: "Something went wrong while reset password",
+            error: error.message
         });
     }
 }
@@ -79,7 +81,7 @@ exports.resetPassword = async (req, res) => {
         }
 
         // token time check
-        if(userDetails.resetPasswordExpires > Date.now()) {
+        if(userDetails.resetPasswordExpires < Date.now()) {
             return res.status(403).json({
                 success: false,
                 message: "Token time is expired, please regenerate your token"

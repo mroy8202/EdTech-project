@@ -8,6 +8,7 @@ exports.updateProfile = async (req, res) => {
         // fetch data
 		const { dateOfBirth = "", about = "", contactNumber } = req.body;
 		const id = req.user.id;
+		console.log("req.user: ", req.user);
 
 		// Find the profile by id
 		const userDetails = await User.findById(id);
