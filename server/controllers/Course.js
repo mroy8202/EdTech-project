@@ -141,3 +141,56 @@ exports.getAllCourses = async (req, res) => {
     }
 };
 
+// getCourseDetails -> handler
+exports.getCourseDetails = async (req, res) => {
+    try {
+        // fetch course id from req body
+        const { courseId } = req.body;
+
+        // find course details
+        const courseDetails = await Course.find({ _id: courseId })
+                                                .populate(
+                                                    {
+                                                        path: "instructor",
+                                                        populate: {
+                                                            path: "additionalDetails",
+                                                        }
+                                                    }
+                                                )
+                                                .pupulate("category")
+                                                .populate("ratingAndReviews")
+                                                .populate(
+                                                    {
+                                                        path: "courseContent",
+                                                        populate: {
+                                                            path: "subSection"
+                                                        }
+                                                    }
+                                                )
+                                                .exec();   
+                                                    
+        // validation
+        if(!courseDetails) {
+            return res.status(400).json({
+                success: false,
+                message: `Could not find the course with ${courseId}`,
+            });
+        }
+
+        // return successfull response
+        res.status(200).json({
+            success: true,
+            message: "Course details fetched successfully",
+            data: courseDetails
+        });
+    }
+    catch(error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error in fetching Course detail",
+            error: error.message
+        });
+    }
+}
+
