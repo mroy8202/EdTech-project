@@ -38,7 +38,7 @@ exports.resetPasswordToken = async (req, res) => {
         await mailSender(email, "Password Reset", `Your Link for email verification is ${url}. Please click this url to reset your password.`);
 
         // return response
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Email sent successfully, please check email and change password"
         }); 
@@ -97,7 +97,7 @@ exports.resetPassword = async (req, res) => {
         );
 
         // return respnose
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Password reset successfull"
         });

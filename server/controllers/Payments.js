@@ -144,7 +144,7 @@ exports.verifySignature = async (req, res) => {
                 "Congratulations, you are onboarded into new course",
             );
             console.log("EmailResponse: ", emailResponse);
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: "Signature verified qand course added",
             });

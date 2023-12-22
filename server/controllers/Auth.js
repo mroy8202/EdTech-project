@@ -56,7 +56,7 @@ exports.sendOTP = async (req, res) => {
         console.log("OTP Body", otpBody);
         
         // return a successfull response
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             OTP: otp,
             message: "OTP sent successfully"
@@ -122,7 +122,9 @@ exports.signup = async (req, res) => {
                 success: false,
                 message: "OTP not found"
             });
-        } else if(otp !== recentOTP.otp) {
+        } else if(otp !== recentOTP[0].otp) {
+            console.log("OTP: ", otp);
+            console.log("RECENT OTP: ", recentOTP[0].otp);
             // invalid OTP
             return res.status(400).json({
                 success: false,
@@ -217,7 +219,7 @@ exports.login = async (req, res) => {
                 expires: new Date(Date.now() + 3 * 24 * 60 * 60 *1000),
                 httpOnly: true
             }
-            res.cookie("token", token, options).status(200).json({
+            return res.cookie("token", token, options).status(200).json({
                 success: true,
                 token,
                 user,

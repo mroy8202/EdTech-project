@@ -55,7 +55,7 @@ exports.deleteAccount = async (req, res) => {
         // Now Delete User
 		await user.findByIdAndDelete({ _id: id });
 		
-        res.status(200).json({
+        return res.status(200).json({
 			success: true,
 			message: "User deleted successfully",
 		});
@@ -78,7 +78,7 @@ exports.getAllUserDetails = async (req, res) => {
 
 		console.log("userDetails: ", userDetails);
 
-		res.status(200).json({
+		return res.status(200).json({
 			success: true,
 			message: "User Data fetched successfully",
 			data: userDetails,
@@ -115,7 +115,7 @@ exports.updateDisplayPicture = async (req, res) => {
 		);
 		
 		// send successfull response
-		res.send({
+		return res.send({
 			success: true,
 			message: `Image Updated successfully`,
 			data: updatedProfile,

@@ -30,7 +30,7 @@ exports.createSection = async (req, res) => {
         ).populate({path: "courseContent", populate: {path: "subSection"}}).exec();
 
         // Return the updated course object in the response
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Section created successfully",
             updatedCourseDetails
@@ -64,7 +64,7 @@ exports.updateSection = async (req, res) => {
         const section = await Section.findByIdAndUpdate(sectionId, {sectionName}, {new: true});
 
         // return response
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: section,
         });
@@ -89,7 +89,7 @@ exports.deleteSection = async (req, res) => {
         await Section.findByIdAndDelete(sectionId);
 
         // return response
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Section deleted successfully"
         });
