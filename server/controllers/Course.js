@@ -47,7 +47,7 @@ exports.createCourse = async (req, res) => {
             });
         }
 
-        // check given tag is valid or not
+        // check given category is valid or not
         const categoryDetails = await Category.findById(category);
         if(!categoryDetails) {
             return res.status(404).json({
@@ -83,7 +83,7 @@ exports.createCourse = async (req, res) => {
             {new: true}
         );
 
-        // update the tag schema
+        // update the Category schema
         await Category.findByIdAndUpdate(
             {_id: category},
             {
@@ -157,8 +157,8 @@ exports.getCourseDetails = async (req, res) => {
                                                         }
                                                     }
                                                 )
-                                                .pupulate("category")
-                                                .populate("ratingAndReviews")
+                                                .populate("category")
+                                                // .populate("ratingAndReviews")
                                                 .populate(
                                                     {
                                                         path: "courseContent",
@@ -168,7 +168,8 @@ exports.getCourseDetails = async (req, res) => {
                                                     }
                                                 )
                                                 .exec();   
-                                                    
+                
+        console.log("COURSE DETAILS -> ", courseDetails);
         // validation
         if(!courseDetails) {
             return res.status(400).json({

@@ -83,7 +83,7 @@ exports.deleteSection = async (req, res) => {
     try {
         // fetch id of the section that has to be deleted -> assuming that we are sending id in params
         // sectionId can also be fetched from req body
-        const { sectionId } = req.params;
+        const { sectionId } = req.body;
 
         // findByIdAndDelete
         await Section.findByIdAndDelete(sectionId);

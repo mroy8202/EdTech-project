@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
@@ -42,7 +43,7 @@ exports.deleteAccount = async (req, res) => {
         // fetch data
 		const id = req.user.id;
 
-		const user = await User.findById({ _id: id });
+		const user = await User.findById({_id: id});
 		if (!user) {
 			return res.status(404).json({
 				success: false,
@@ -51,10 +52,10 @@ exports.deleteAccount = async (req, res) => {
 		}
 
 		// Delete Assosiated Profile with the User
-		await Profile.findByIdAndDelete({ _id: user.userDetails });
-		
+		await Profile.findByIdAndDelete({ _id: user.additionalDetails });
+
         // Now Delete User
-		await user.findByIdAndDelete({ _id: id });
+		await User.findByIdAndDelete({ _id: id });
 		
         return res.status(200).json({
 			success: true,
