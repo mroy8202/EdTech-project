@@ -36,7 +36,7 @@ const Navbar = () => {
     //         setSubLinks(result.data.data);
     //     }
     //     catch(error) {
-    //         console.log("Could not fetch the Category List");
+    //         console.log("Could not fetch the Category List: ", error);
     //     }
     // }
     // useEffect(() => {
@@ -86,7 +86,7 @@ const Navbar = () => {
                                                                         <p>{subLink.title}</p>
                                                                     </Link>
                                                                 ) )
-                                                        ) : (<div></div>)
+                                                        ) : (<div>No sublinks availble</div>)
                                                     }
 
                                                 </div>
