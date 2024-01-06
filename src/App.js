@@ -18,7 +18,7 @@ import Settings from "./components/core/Dashboard/Settings";
 import { useDispatch, useSelector } from "react-redux";
 import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses";
 import Cart from "./components/core/Dashboard/Cart";
-import { ACCOUNT_TYPE } from "./utils/constants";
+import { ACCOUNT_TYPE } from "./utils/contstant";
 
 function App() {
   const dispatch = useDispatch();

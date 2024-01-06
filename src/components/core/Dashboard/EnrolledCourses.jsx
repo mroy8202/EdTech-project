@@ -22,7 +22,7 @@ const EnrolledCourses = () => {
 
     useEffect(()=> {
         getEnrolledCourses();
-    },[]);
+    }, [] );
 
 
   return (
@@ -46,7 +46,7 @@ const EnrolledCourses = () => {
                         enrolledCourses.map((course,index)=> (
                             <div>
                                 <div>
-                                    <img  src={course.thumbnail}/>
+                                    <img  src={course.thumbnail} alt='thumbnail.png'/>
                                     <div>
                                         <p>{course.courseName}</p>
                                         <p>{course.courseDescription}</p>
