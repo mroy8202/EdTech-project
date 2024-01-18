@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react"
 
@@ -8,7 +8,7 @@ import "swiper/css/free-mode"
 import "swiper/css/pagination"
 // import "../../.."
 // Import required modules
-import { FreeMode, Pagination } from "swiper"
+import { FreeMode, Pagination } from "swiper/modules"
 
 // import { getAllCourses } from "../../services/operations/courseDetailsAPI"
 import Course_Card from "./Course_Card"
