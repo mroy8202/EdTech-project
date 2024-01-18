@@ -21,6 +21,5 @@ root.render(
         <Toaster />
       </BrowserRouter>
     </Provider>
-    
   </React.StrictMode>
 );
