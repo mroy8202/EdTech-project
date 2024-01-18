@@ -4,6 +4,7 @@ const app = express();
 const userRoutes = require("./routes/User");
 const profileRoutes = require("./routes/Profile");
 const paymentRoutes = require("./routes/Payments");
+const contactUsRoute = require("./routes/Contact");
 const courseRoutes = require("./routes/Course");
 
 const database = require("./config/database");
@@ -23,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "*",
         credentials: true,
     })
 );
@@ -40,6 +41,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/course", courseRoutes);
+app.use("/api/v1/reach", contactUsRoute);
 
 // default route
 app.get("/", (req, res) => {
