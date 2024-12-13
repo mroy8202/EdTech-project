@@ -1,70 +1,151 @@
-# Getting Started with Create React App
+# EdTech Backend & Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is an Ed-tech platform where users can register as students or instructors. Instructors can create, update, and delete courses, while students can purchase, consume, and rate them. The platform ensures secure authentication using JWT, bcrypt for password hashing, OTP verification, and Razorpay for transactions. It also integrates Nodemailer for email notifications and Cloudinary for media storage.
 
-## Available Scripts
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Backend (Node.js/Express)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* User authentication (signup, login, logout)
+* Profile management (update, delete, display picture)
+* Course creation, updating, and deletion (instructor only)
+* Payment integration (capture and verify payments via Razorpay)
+* Email notifications upon successful payment
+* Password reset functionality with OTP
+* Instructor dashboard with detailed course management
+* Cloud storage integration with Cloudinary for file uploads
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend (React)
 
-### `npm test`
+* Responsive UI using Tailwind CSS
+* Redux for state management
+* React Router for navigation
+* JWT authentication for protected routes
+* Dynamic content loading (infinite scroll for course listing)
+* Course details and video lectures for students
+* Student and Instructor-specific routes
+* Interactive dashboard for users
+* Integrated Chart.js for course progress tracking
+* Real-time notifications with React Hot Toast
+* Ability to add and edit courses for instructors
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
 
-### `npm run build`
+### Backend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* **Node.js**: Server-side JavaScript runtime
+* **Express.js**: Web framework
+* **MongoDB**: Database
+* **Mongoose**: MongoDB ODM
+* **JWT**: Authentication token handling
+* **Bcrypt**: Password hashing
+* **Cloudinary**: Image hosting
+* **Razorpay**: Payment gateway
+* **Nodemailer**: Email sending
+* **Nodemon**: Auto-reload server during development
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* **React.js**: UI framework
+* **Tailwind CSS**: Utility-first CSS framework
+* **Redux**: State management
+* **React Router**: Routing library
+* **Axios**: HTTP client for API calls
+* **Chart.js**: Data visualization library
+* **React Hot Toast**: For real-time notifications
+* **React Icons**: For adding icons
+* **React Dropzone**: For file upload handling
 
-### `npm run eject`
+## Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Backend Setup
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Clone the backend repository:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+git clone https://github.com/your-username/edtech-backend.git
+cd edtech-backend
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Install dependencies:
 
-## Learn More
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. Create a `.env` file in the root of the project and add the following environment variables:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+MONGO_URI=your_mongo_db_connection_string
+JWT_SECRET=your_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+RAZORPAY_KEY=your_razorpay_key
+PORT=your_preferred_port_number
+```
 
-### Code Splitting
+4. Start the server:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm run dev
+```
 
-### Analyzing the Bundle Size
+### Frontend Setup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Clone the frontend repository:
 
-### Making a Progressive Web App
+```bash
+git clone https://github.com/your-username/edtech-frontend.git
+cd edtech-frontend
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+2. Install dependencies:
 
-### Advanced Configuration
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. Start the frontend development server:
 
-### Deployment
+```bash
+npm run dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+4. Open your browser and go to http://localhost:5173.
 
-### `npm run build` fails to minify
+## API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Authentication Routes (Require JWT token for access):**
+
+* `POST /api/v1/auth/signup`: Sign up a new user
+* `POST /api/v1/auth/login`: Login an existing user
+* `POST /api/v1/auth/logout`: Logout the current user
+* `POST /api/v1/auth/sendOTP`: Send OTP for password reset
+* `POST /api/v1/auth/changePassword`: Change user password
+
+**Profile Routes:**
+
+* `DELETE /api/v1/profile/deleteProfile`: Delete user profile
+* `PUT /api/v1/profile/updateProfile`: Update user profile
+* `GET /api/v1/profile/getUserDetails`: Fetch all user details
+* `GET /api/v1/profile/getEnrolledCourses`: Get courses the user is enrolled in
+* `PUT /api/v1/profile/updateDisplayPicture`: Update user profile picture
+
+**Course Routes:**
+
+* `POST /api/v1/course/createCourse`: Create a new course (instructor only)
+* `GET /api/v1/course/getAllCourses`: Get a list of all courses
+* `GET /api/v1/course/getInstructorCourses`: Get courses by instructor
+
+**Payment Routes:**
+
+* `POST /api/v1/payment/capturePayment`: Capture payment (student only)
+* `POST /api/v1/payment/verifyPayment`: Verify payment (student only)
+* `POST /api/v1/payment/sendPaymentSuccessEmail`: Send email after payment success (student only)
+
+**Contact Us Route:**
+
+* `POST /api/v1/reach/contact`: Contact form submission
+
