@@ -70,7 +70,7 @@ exports.categoryPageDetails = async (req, res) => {
             })
             .exec();
 
-		console.log("selectedCategory: ", selectedCategory);
+		// console.log("selectedCategory: ", selectedCategory);
 
 		// Handle the case when the category is not found
 		if (!selectedCategory) {
@@ -89,14 +89,13 @@ exports.categoryPageDetails = async (req, res) => {
 				message: "No courses found for the selected category.",
 			});
 		}
-
 		// const selectedCourses = selectedCategory.course;
 
 		// Get courses for other categories
 		const categoriesExceptSelected = await Category.find({
 			_id: { $ne: categoryId },
 		});
-        
+
         let differentCategory = await Category.findOne(
             categoriesExceptSelected[getRandomInt(categoriesExceptSelected.length)]
               ._id
