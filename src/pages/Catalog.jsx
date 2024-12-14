@@ -45,6 +45,8 @@ function Catalog() {
     }
   }, [categoryId])
 
+  // console.log("Catalog page data: ", catalogPageData)
+
   if (loading || !catalogPageData) {
     return (
       <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
@@ -103,7 +105,9 @@ function Catalog() {
         </div>
         <div>
           <CourseSlider
-            Courses={catalogPageData?.data?.selectedCategory?.courses}
+            Courses={Array.isArray(catalogPageData?.data?.selectedCategory?.courses)
+              ? catalogPageData?.data?.selectedCategory?.courses
+              : [catalogPageData?.data?.selectedCategory?.courses]}
           />
         </div>
       </div>
@@ -114,7 +118,9 @@ function Catalog() {
         </div>
         <div className="py-8">
           <CourseSlider
-            Courses={catalogPageData?.data?.differentCategory?.courses}
+            Courses={Array.isArray(catalogPageData?.data?.differentCategory?.courses)
+              ? catalogPageData?.data?.differentCategory?.courses
+              : [catalogPageData?.data?.differentCategory?.courses]}
           />
         </div>
       </div>

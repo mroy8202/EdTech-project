@@ -6,14 +6,27 @@ import GetAvgRating from "../../../utils/avgRating"
 import RatingStars from "../../common/RatingStars"
 
 function CourseCard({ course, Height }) {
-  // const avgReviewCount = GetAvgRating(course.ratingAndReviews)
-  // console.log(course.ratingAndReviews)
+  
   const [avgReviewCount, setAvgReviewCount] = useState(0)
   useEffect(() => {
-    const count = GetAvgRating(course.ratingAndReviews)
-    setAvgReviewCount(count)
+    if (course?.ratingAndReviews) {
+      const count = GetAvgRating(course.ratingAndReviews);
+      setAvgReviewCount(count);
+    }
   }, [course])
   // console.log("count............", avgReviewCount)
+
+  if (!course || !course._id || !course.ratingAndReviews) {
+    return null; 
+  }
+
+  // console.log("Course Card: ", course)
+  // console.log("Course id: ", course._id)
+  // console.log("rating and review: ", course.ratingAndReviews.length)
+
+  if(!course) {
+    console.log("course not found")
+  }
 
   return (
     <>
