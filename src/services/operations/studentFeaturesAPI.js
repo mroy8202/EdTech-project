@@ -70,9 +70,8 @@ export async function BuyCourse(
       currency: orderResponse.data.data.currency,
       amount: `${orderResponse.data.data.amount}`,
       order_id: orderResponse.data.data.id,
-      name: "StudyNotion",
+      name: "EDTECH",
       description: "Thank you for Purchasing the Course.",
-      image: rzpLogo,
       prefill: {
         name: `${user_details.firstName} ${user_details.lastName}`,
         email: user_details.email,
